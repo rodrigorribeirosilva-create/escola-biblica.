@@ -1,0 +1,13 @@
+# Dependências e build
+node_modules/
+dist/
+.vite/
+
+# Segredos e configurações locais
+.env
+.env.*
+!.env.example
+
+# Logs e arquivos locais
+*.log
+.DS_Store
