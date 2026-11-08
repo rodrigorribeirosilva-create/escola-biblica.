@@ -18,7 +18,7 @@ export default function App() {
   const [selected,setSelected] = useState(null);
   const [expanded,setExpanded] = useState(0);
   const [moduleName,setModuleName] = useState('');
-  const [addingModule,setAddingModule] = useState(false);
+  const [addingModule,setAddingModule] = useState(false);\n  const [addingLessonFor,setAddingLessonFor] = useState(0);\n  const [lessonName,setLessonName] = useState('');
 
   const go = (next) => { setPage(next); setMobile(false); window.scrollTo(0,0); };
   const openCourse = (course) => { setSelected(course); setExpanded(course.modules[0]?.id || 0); go('detail'); };
@@ -32,6 +32,12 @@ export default function App() {
     if (!selected || !moduleName.trim()) return;
     const updated = {...selected,modules:[...selected.modules,{id:Date.now(),title:moduleName.trim(),lessons:[]}]};
     setCourses(courses.map(c=>c.id===selected.id?updated:c)); setSelected(updated); setModuleName(''); setAddingModule(false);
+  };
+  const saveLesson = (e, moduleId) => {
+    e.preventDefault();
+    if (!selected || !lessonName.trim()) return;
+    const updated = {...selected,modules:selected.modules.map(m=>m.id===moduleId?{...m,lessons:[...m.lessons,lessonName.trim()]}:m)};
+    setCourses(courses.map(c=>c.id===selected.id?updated:c)); setSelected(updated); setLessonName(''); setAddingLessonFor(0);
   };
   const filtered = courses.filter(c=>c.title.toLowerCase().includes(query.toLowerCase()));
 
@@ -59,7 +65,7 @@ export default function App() {
 
     {page==='admin' && <main className="wrap page"><label>GESTÃO DA PLATAFORMA</label><h1>Painel administrativo</h1><div className="stats"><b>{courses.length}<small>Cursos cadastrados</small></b><b>0<small>Alunos registrados</small></b><b>{courses.reduce((n,c)=>n+c.modules.reduce((a,m)=>a+m.lessons.length,0),0)}<small>Aulas cadastradas</small></b></div><div className="adminhead"><h2>Gerenciar cursos</h2><button className="primary" onClick={()=>setAdding(!adding)}><Plus/> Novo curso</button></div>{adding&&<form className="panel adminform" onSubmit={saveCourse}><input value={courseName} onChange={e=>setCourseName(e.target.value)} placeholder="Nome do curso" required/><textarea value={courseDesc} onChange={e=>setCourseDesc(e.target.value)} placeholder="Descrição do curso"/><button className="primary">Salvar curso</button></form>}{courses.map(c=><article className="rowitem admin-course" key={c.id}><div><b>{c.title}</b><small>{c.tag} • {c.modules.length} módulos • {c.modules.reduce((n,m)=>n+m.lessons.length,0)} aulas</small></div><button onClick={()=>{setSelected(c);go('manage')}}>Gerenciar conteúdo <ArrowRight size={15}/></button></article>)}</main>}
 
-    {page==='manage' && selected && <main className="wrap page"><button className="backlink" onClick={()=>go('admin')}>← Voltar ao painel</button><label>ORGANIZAÇÃO DO CONTEÚDO</label><h1>{selected.title}</h1><p>Cadastre os módulos que vão organizar as aulas deste curso.</p><div className="adminhead"><h2>Módulos do curso</h2><button className="primary" onClick={()=>setAddingModule(!addingModule)}><Plus/> Novo módulo</button></div>{addingModule&&<form className="panel adminform" onSubmit={saveModule}><input value={moduleName} onChange={e=>setModuleName(e.target.value)} placeholder="Nome do módulo" required/><button className="primary">Adicionar módulo</button></form>}{selected.modules.map((m,i)=><article className="rowitem" key={m.id}><b>Módulo {i+1}: {m.title}</b><small>{m.lessons.length} aulas cadastradas</small></article>)}{selected.modules.length===0&&<article className="panel"><p>Este curso ainda não tem módulos. Use “Novo módulo” para começar.</p></article>}<p className="notice">A inclusão e edição de aulas, assim como o salvamento permanente, serão concluídos na etapa de banco de dados.</p></main>}
+    {page==='manage' && selected && <main className="wrap page"><button className="backlink" onClick={()=>go('admin')}>← Voltar ao painel</button><label>ORGANIZAÇÃO DO CONTEÚDO</label><h1>{selected.title}</h1><p>Cadastre os módulos que vão organizar as aulas deste curso.</p><div className="adminhead"><h2>Módulos do curso</h2><button className="primary" onClick={()=>setAddingModule(!addingModule)}><Plus/> Novo módulo</button></div>{addingModule&&<form className="panel adminform" onSubmit={saveModule}><input value={moduleName} onChange={e=>setModuleName(e.target.value)} placeholder="Nome do módulo" required/><button className="primary">Adicionar módulo</button></form>}{selected.modules.map((m,i)=><article className="rowitem manage-module" key={m.id}><div><b>Módulo {i+1}: {m.title}</b><small>{m.lessons.length} aulas cadastradas</small></div><ul className="managed-lessons">{m.lessons.map((lesson,j)=><li key={j}><CheckCircle2 size={14}/>{lesson}</li>)}</ul><button className="module-add" onClick={()=>setAddingLessonFor(addingLessonFor===m.id?0:m.id)}><Plus size={14}/> Adicionar aula</button>{addingLessonFor===m.id&&<form className="lesson-form" onSubmit={e=>saveLesson(e,m.id)}><input value={lessonName} onChange={e=>setLessonName(e.target.value)} placeholder="Título da aula" required/><button className="primary">Salvar aula</button></form>}</article>)}{selected.modules.length===0&&<article className="panel"><p>Este curso ainda não tem módulos. Use “Novo módulo” para começar.</p></article>}<p className="notice">Os módulos e títulos das aulas ficam apenas nesta demonstração enquanto o banco de dados não estiver conectado. Ainda não há gravação permanente nem vídeo/aula publicado.</p></main>}
 
     <footer><b>◈ ESCOLA BÍBLICA</b><span>Conhecimento que transforma.</span><button onClick={()=>go('admin')}><Settings size={15}/> Administração</button></footer>
   </>;
