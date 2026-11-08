@@ -1,0 +1,24 @@
+name: Build Biblioteca Digital
+
+on:
+  push:
+    branches:
+      - feature/biblioteca-digital-simples
+  pull_request:
+    branches:
+      - feature/biblioteca-digital-simples
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Instalar dependências
+        run: npm install
+      - name: Verificar build
+        run: npm run build
