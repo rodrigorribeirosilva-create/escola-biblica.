@@ -214,7 +214,7 @@ export default function App() {
         <a href={settings.youtube || 'https://www.youtube.com/'} target="_blank" rel="noreferrer">YouTube <ArrowUpRight size={14} /></a>
         {settings.instagram && <a href={settings.instagram} target="_blank" rel="noreferrer">Instagram <ArrowUpRight size={14} /></a>}
         {settings.whatsapp && <a href={settings.whatsapp} target="_blank" rel="noreferrer">WhatsApp <ArrowUpRight size={14} /></a>}
-        <button className="admin-link" onClick={openAdmin}><Settings size={15} /> Painel</button>
+        <button className="admin-link" onClick={openAdmin}><Settings size={15} /> Painel administrativo</button>
       </nav>
     </header>
 
