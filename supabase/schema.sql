@@ -112,17 +112,22 @@ with check (exists (select 1 from public.profiles p where p.id = (select auth.ui
 create policy "lessons_read_preview_or_enrolled" on public.lessons
 for select to anon, authenticated
 using (
-  is_preview = true
-  or exists (
-    select 1 from public.modules m
+  exists (
+    select 1
+    from public.modules m
     join public.courses c on c.id = m.course_id
-    where m.id = module_id and c.is_published = true
-  )
-  and exists (
-    select 1 from public.enrollments e
-    where e.student_id = (select auth.uid())
-      and e.status = 'active'
-      and e.course_id = (select m.course_id from public.modules m where m.id = module_id)
+    where m.id = module_id
+      and c.is_published = true
+      and (
+        is_preview = true
+        or exists (
+          select 1
+          from public.enrollments e
+          where e.student_id = (select auth.uid())
+            and e.status = 'active'
+            and e.course_id = m.course_id
+        )
+      )
   )
 );
 
@@ -169,3 +174,17 @@ create index if not exists modules_course_position_idx on public.modules(course_
 create index if not exists lessons_module_position_idx on public.lessons(module_id, position);
 create index if not exists enrollments_student_status_idx on public.enrollments(student_id, status);
 create index if not exists lesson_progress_student_idx on public.lesson_progress(student_id);
+
+
+-- Acesso à Data API: grants definem quais papéis podem alcançar as tabelas;
+-- as políticas RLS acima continuam definindo quais linhas cada papel pode acessar.
+-- Novas tabelas podem não ser expostas automaticamente em projetos Supabase recentes.
+grant usage on schema public to anon, authenticated;
+grant select on public.courses, public.modules, public.lessons to anon, authenticated;
+grant select, insert, update, delete on public.courses, public.modules, public.lessons to authenticated;
+grant select on public.profiles to authenticated;
+grant select, insert, update, delete on public.enrollments to authenticated;
+grant select, insert, update on public.lesson_progress to authenticated;
+
+-- Não conceda service_role/secret key ao navegador. A chave publishable é pública
+-- por projeto e depende destas políticas RLS para proteger os dados.
