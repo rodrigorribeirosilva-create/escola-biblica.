@@ -28,7 +28,7 @@ export default function App(){
  const saveProduct=async e=>{e.preventDefault();const payload={...form,price:Number(form.price||0),slug:(form.slug||form.title).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')};const res=editing?await supabase.from('digital_products').update(payload).eq('id',editing):await supabase.from('digital_products').insert(payload);if(res.error){setMessage('Não foi possível salvar: '+res.error.message);return}setForm(blank);setEditing(null);setMessage('Conteúdo salvo.');await load()};
  const edit=p=>{setEditing(p.id);setForm({...p,price:String(p.price)});setSection('novo')};
  const remove=async id=>{if(!confirm('Excluir este conteúdo?'))return;await supabase.from('digital_products').delete().eq('id',id);await load()};
- const openProduct=p=>{setSelected(p);go('product')};
+ const openProduct=p=>{setSelected(p);setView('product');location.hash='produto='+encodeURIComponent(p.slug);window.scrollTo(0,0)};
  const pixCopy=()=>{navigator.clipboard?.writeText(settings.pix_key);setMessage('Chave Pix copiada, se o navegador permitir.')};
  const whatsappUrl=p=>{const msg=encodeURIComponent('Olá! Quero comprar '+p.title+'. Pode me orientar sobre o pagamento via Pix?');return 'https://wa.me/'+(settings.whatsapp||'').replace(/\D/g,'')+'?text='+msg};
  const videos=(selected?.youtube_url||'').split(/\n+/).map(yt).filter(Boolean);
