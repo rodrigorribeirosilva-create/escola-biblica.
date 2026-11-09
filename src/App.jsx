@@ -3,7 +3,7 @@ import {supabase,isSupabaseConfigured} from './lib/supabaseClient';
 import {BookOpen,PlayCircle,LockKeyhole,LogOut,Plus,Copy,ExternalLink,ArrowLeft,Wallet,Video,BookText,Clapperboard,Settings,CheckCircle2,FileUp,FileText,Trash2,Download} from 'lucide-react';
 
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const yt=url=>{if(!url)return '';try{const u=new URL(url);const host=u.hostname.toLowerCase().replace(/^www\\./,'');if(host==='youtu.be')return u.pathname.split('/').filter(Boolean)[0]||'';if(!['youtube.com','m.youtube.com','youtube-nocookie.com'].includes(host))return '';if(u.searchParams.get('v'))return u.searchParams.get('v');const m=u.pathname.match(/^\\/(?:embed|shorts)\\/([^/?]+)/);return m?.[1]||'';}catch{return ''}};
+const yt=url=>{if(!url)return '';try{const u=new URL(url);const host=u.hostname.toLowerCase().replace(/^www\./,'');if(host==='youtu.be')return u.pathname.split('/').filter(Boolean)[0]||'';if(!['youtube.com','m.youtube.com','youtube-nocookie.com'].includes(host))return '';if(u.searchParams.get('v'))return u.searchParams.get('v');const m=u.pathname.match(/^\/(?:embed|shorts)\/([^/?]+)/);return m?.[1]||'';}catch{return ''}};
 const blank={title:'',description:'',product_type:'curso',cover_url:'',price:'',youtube_url:'',slug:'',is_published:false};
 export default function App(){
  const [view,setView]=useState(location.hash.startsWith('#painel')?'admin':location.hash.startsWith('#produto=')?'product':'home');
