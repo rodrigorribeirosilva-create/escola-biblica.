@@ -1,4 +1,5 @@
-# A função recebe links individuais com token aleatório de 256 bits.
-# A validação do token é feita dentro da função antes de consultar o banco.
+# A função valida a publishable key no header apikey com @supabase/server
+# e também exige um token individual aleatório de 256 bits no corpo da requisição.
+# A chave secreta administrativa é usada somente no runtime server-side.
 [functions.get-customer-access-content]
 verify_jwt = false
