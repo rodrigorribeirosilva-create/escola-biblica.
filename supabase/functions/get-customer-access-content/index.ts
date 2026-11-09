@@ -4,6 +4,7 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Cache-Control": "no-store",
 };
 
 const json = (body: unknown, status = 200) =>
@@ -97,6 +98,7 @@ Deno.serve(async (request) => {
     const lessonIndex = body.lessonIndex;
     const completed = body.completed;
     if (
+      typeof lessonIndex !== "number" ||
       !Number.isInteger(lessonIndex) ||
       Number(lessonIndex) < 0 ||
       Number(lessonIndex) >= lessonCount ||
