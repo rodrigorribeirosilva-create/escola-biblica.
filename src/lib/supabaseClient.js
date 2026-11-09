@@ -1,10 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
+const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
 
-if (!supabaseUrl || !supabaseKey) {
-  console.warn('Supabase environment variables are missing.');
-}
+// A URL e a publishable key são configuração pública do cliente.
+// Nunca coloque SUPABASE_SECRET_KEY ou service_role neste arquivo.
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabasePublishableKey);
 
-export const supabase = createClient(supabaseUrl || 'https://izfyebdwuzwpgyllaxjk.supabase.co', supabaseKey || 'sb_publishable_AwQsSlG-Q1lF2rHjYlAIJA_bPCI9rY5');
+export const supabase = isSupabaseConfigured
+  ? createClient(supabaseUrl, supabasePublishableKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+      },
+    })
+  : null;
