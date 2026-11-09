@@ -66,6 +66,8 @@ O endpoint `supabase/functions/get-customer-access-content/index.ts` valida o to
 - A função usa a chave secreta do projeto no runtime server-side (`SUPABASE_SECRET_KEYS`, chave `default`). Nunca copie essa chave para o frontend ou para o repositório.
 - O bucket `biblioteca-digital` é privado e as políticas permitem operações somente a administradores autenticados.
 
+Antes de usar o CLI, confira a versão e os comandos disponíveis com `supabase --version` e `supabase --help`. O CLI v3 passou a priorizar a stack local e pede confirmação para alterações hospedadas; revise qualquer confirmação e não aceite operações em projeto diferente do escolhido pelo proprietário.
+
 Depois de vincular localmente o CLI ao projeto escolhido, implante apenas a função necessária:
 
 ```bash
