@@ -108,4 +108,6 @@ A organização já estava no limite de dois projetos gratuitos ativos. Por isso
 - Segurança da Data API: https://supabase.com/docs/guides/api/securing-your-api
 - RLS: https://supabase.com/docs/guides/database/postgres/row-level-security
 - Secrets de Edge Functions: https://supabase.com/docs/guides/functions/secrets
+- Segurança de Edge Functions e modos de autenticação: https://supabase.com/docs/guides/functions/auth
+- SDK `@supabase/server`: https://www.npmjs.com/package/@supabase/server
 - Deploy de Edge Functions: https://supabase.com/docs/guides/functions/deploy
