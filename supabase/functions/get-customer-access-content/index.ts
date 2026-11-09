@@ -29,9 +29,23 @@ Deno.serve(async (request) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   // A chave secreta existe somente no ambiente da Edge Function, nunca no React.
-  const secretKey =
-    Deno.env.get("SUPABASE_SECRET_KEY") ??
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  // Projetos atuais disponibilizam as chaves secretas como um mapa JSON.
+  // O fallback legado/local existe apenas para compatibilidade do runtime.
+  let secretKey = "";
+  const secretKeysJson = Deno.env.get("SUPABASE_SECRET_KEYS");
+  if (secretKeysJson) {
+    try {
+      const secretKeys = JSON.parse(secretKeysJson);
+      secretKey = typeof secretKeys.default === "string" ? secretKeys.default : "";
+    } catch {
+      console.error("Supabase secret-key environment value is not valid JSON.");
+    }
+  }
+  secretKey =
+    secretKey ||
+    Deno.env.get("SUPABASE_SECRET_KEY") ||
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ||
+    "";
 
   if (!supabaseUrl || !secretKey) {
     console.error("Missing server-side Supabase function configuration.");
