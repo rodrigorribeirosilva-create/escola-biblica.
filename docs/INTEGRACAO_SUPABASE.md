@@ -61,9 +61,9 @@ A promoção deve ser feita pelo proprietário em ambiente confiável. Não há 
 
 O endpoint `supabase/functions/get-customer-access-content/index.ts` valida o token de acesso e retorna somente nome do comprador e conteúdo autorizado. A tabela `customer_access` permanece restrita a administradores por RLS.
 
-- `supabase/config.toml` define `verify_jwt = false` somente para esta função, porque o comprador usa um token de acesso individual em vez de uma conta Supabase.
-- A função valida o formato de token de 256 bits e consulta apenas um acesso ativo.
-- A função usa a chave secreta do projeto no runtime server-side (`SUPABASE_SECRET_KEYS`, chave `default`). Nunca copie essa chave para o frontend ou para o repositório.
+- `supabase/config.toml` define `verify_jwt = false` somente para esta função, porque a chamada usa uma publishable key (que não é JWT) e um token individual do comprador.
+- O SDK `@supabase/server@1.9.2` valida a publishable key recebida no header `apikey` e fornece um cliente administrativo somente dentro do runtime server-side.
+- A função valida o formato do token de 256 bits e consulta apenas um acesso ativo. O SDK obtém a chave secreta do ambiente seguro do projeto (`SUPABASE_SECRET_KEYS`, chave `default`); ela nunca é lida pelo React, enviada ao navegador ou gravada no repositório.
 - O bucket `biblioteca-digital` é privado e as políticas permitem operações somente a administradores autenticados.
 
 Antes de usar o CLI, confira a versão e os comandos disponíveis com `supabase --version` e `supabase --help`. O CLI v3 passou a priorizar a stack local e pede confirmação para alterações hospedadas; revise qualquer confirmação e não aceite operações em projeto diferente do escolhido pelo proprietário.
