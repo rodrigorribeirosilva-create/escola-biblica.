@@ -49,6 +49,16 @@ create table if not exists public.customer_access (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.customer_access_progress (
+  id uuid primary key default gen_random_uuid(),
+  customer_access_id uuid not null
+    references public.customer_access(id) on delete cascade,
+  lesson_index integer not null check (lesson_index >= 0 and lesson_index < 500),
+  completed boolean not null default false,
+  updated_at timestamptz not null default now(),
+  unique (customer_access_id, lesson_index)
+);
+
 create table if not exists public.library_files (
   id uuid primary key default gen_random_uuid(),
   file_name text not null,
@@ -89,6 +99,7 @@ alter table public.profiles enable row level security;
 alter table public.digital_products enable row level security;
 alter table public.store_settings enable row level security;
 alter table public.customer_access enable row level security;
+alter table public.customer_access_progress enable row level security;
 alter table public.library_files enable row level security;
 
 drop policy if exists profiles_read_own on public.profiles;
@@ -154,6 +165,22 @@ with check (
   )
 );
 
+drop policy if exists customer_access_progress_admin_manage on public.customer_access_progress;
+create policy customer_access_progress_admin_manage on public.customer_access_progress
+for all to authenticated
+using (
+  exists (
+    select 1 from public.profiles p
+    where p.id = (select auth.uid()) and p.role = 'admin'
+  )
+)
+with check (
+  exists (
+    select 1 from public.profiles p
+    where p.id = (select auth.uid()) and p.role = 'admin'
+  )
+);
+
 drop policy if exists library_files_admin_manage on public.library_files;
 create policy library_files_admin_manage on public.library_files
 for all to authenticated
@@ -176,11 +203,13 @@ grant select on public.digital_products, public.store_settings to anon, authenti
 grant select on public.profiles to authenticated;
 grant select, insert, update, delete
   on public.digital_products, public.store_settings,
-     public.customer_access, public.library_files
+     public.customer_access, public.customer_access_progress, public.library_files
   to authenticated;
 
 create index if not exists customer_access_created_at_idx
   on public.customer_access(created_at desc);
+create index if not exists customer_access_progress_access_idx
+  on public.customer_access_progress(customer_access_id);
 create index if not exists library_files_created_at_idx
   on public.library_files(created_at desc);
 
@@ -244,7 +273,7 @@ using (
 
 -- IMPORTANTE:
 -- 1. Não existe RPC pública para consultar customer_access por token.
--- 2. A validação do link individual é feita pela Edge Function
---    get-customer-access-content, que usa uma chave secreta apenas no servidor.
+-- 2. A validação do link individual e a gravação do progresso são feitas pela
+--    Edge Function get-customer-access-content, com chave secreta só no servidor.
 -- 3. A primeira conta só vira admin depois de promoção manual pelo proprietário,
 --    diretamente no banco, nunca por user_metadata ou pelo formulário público.
