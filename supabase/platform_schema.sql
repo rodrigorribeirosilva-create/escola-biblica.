@@ -53,7 +53,7 @@ create table if not exists public.customer_access_progress (
   id uuid primary key default gen_random_uuid(),
   customer_access_id uuid not null
     references public.customer_access(id) on delete cascade,
-  lesson_index integer not null check (lesson_index >= 0 and lesson_index < 500),
+  lesson_index integer not null check (lesson_index >= 0),
   completed boolean not null default false,
   updated_at timestamptz not null default now(),
   unique (customer_access_id, lesson_index)
