@@ -11,3 +11,6 @@ dist/
 # Logs e arquivos locais
 *.log
 .DS_Store
+
+# Segredos locais das Edge Functions
+supabase/functions/.env
