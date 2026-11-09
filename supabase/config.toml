@@ -1,0 +1,4 @@
+# A função recebe links individuais com token aleatório de 256 bits.
+# A validação do token é feita dentro da função antes de consultar o banco.
+[functions.get-customer-access-content]
+verify_jwt = false
