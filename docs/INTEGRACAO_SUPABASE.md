@@ -37,6 +37,8 @@ Quando o proprietário escolher e confirmar o projeto Supabase:
 
 A publishable key é pública por definição e pode chegar ao navegador. Ela não é uma senha administrativa: a segurança depende das permissões mínimas, RLS e políticas de Storage.
 
+No projeto, confirme em Settings > API Keys que existem as chaves **default** publishable e secret. Se o projeto ainda tiver apenas as chaves antigas, crie as novas chaves no painel. A Edge Function usa a secret key default pelo ambiente gerenciado do Supabase; não é necessário copiá-la para `.env.local`.
+
 **Nunca** coloque `sb_secret_...`, `service_role` ou qualquer chave secreta em `VITE_*`, no React, no HTML, no GitHub ou em variáveis de frontend.
 
 ## Banco e primeiro administrador
