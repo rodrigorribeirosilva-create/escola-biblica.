@@ -9,7 +9,7 @@ Este guia descreve a integração preparada para a aplicação que está atualme
 - O painel administrativo usa Supabase Auth com e-mail e senha e verifica `profiles.role = 'admin'`.
 - A aplicação observa mudanças de sessão com `onAuthStateChange`.
 - A biblioteca usa o bucket privado `biblioteca-digital`.
-- Links individuais usam tokens de 32 bytes aleatórios (64 caracteres hexadecimais). A consulta do conteúdo foi movida para uma Edge Function server-side; o navegador não consulta diretamente a tabela de tokens.
+- Links individuais usam tokens de 32 bytes aleatórios (64 caracteres hexadecimais). A consulta do conteúdo e a gravação do progresso por aula foram movidas para uma Edge Function server-side; o navegador não consulta diretamente as tabelas de tokens ou progresso.
 
 ## Arquivos de banco — atenção
 
@@ -81,6 +81,7 @@ A função deve ser implantada no mesmo projeto configurado nas variáveis do fr
 - Confirmar que conta comum não consegue abrir o painel, consultar tokens, alterar produtos, acessar biblioteca ou fazer upload.
 - Confirmar que visitantes só veem produtos publicados e configurações públicas de pagamento/contato.
 - Testar link válido, link bloqueado, token inválido e token inexistente.
+- Marcar e desmarcar aulas e confirmar que o progresso continua salvo ao recarregar o link.
 - Testar upload, URL assinada e exclusão de arquivos no bucket privado.
 - Rodar os Supabase Security Advisors e testes RLS após aplicar o SQL.
 - Gerar e versionar um lockfile de dependências antes da publicação. No estado inspecionado desta branch, `package-lock.json` ainda não existe.
